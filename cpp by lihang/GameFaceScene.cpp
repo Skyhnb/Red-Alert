@@ -24,13 +24,15 @@ bool GameFace::init()
 
 	/*initTiledmap();
 	initSprite();*/
-	//a black screen i can't deal with it
+
 	_tileMap = TMXTiledMap::create("map/LargeMap.tmx");
 	this->addChild(_tileMap,0);
 
-	//can't find this layer
-	/*_decoration = _tileMap->getLayer("decoration");
-	_decoration->setVisible(true);*/
+	_decoration = _tileMap->getLayer("decoration");
+	_decoration->setVisible(true);
+
+	_collidable = _tileMap->getLayer("collidable");
+	_collidable->setVisible(false);
 
 	TMXObjectGroup* group = _tileMap->getObjectGroup("objects");
 	ValueMap spawnPoint = group->getObject("ninja");
@@ -44,12 +46,12 @@ bool GameFace::init()
 
 	setViewpointCenter(_player->getPosition());
 
-	_collidable = _tileMap->getLayer("collidable");
-	_collidable->setVisible(false);
-
 	setTouchEnabled(true);
+
 	//设置为单点触摸
 	setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
+
+	//can't to add a menu
 	//Sprite *closenommal = Sprite::create("CloseNormal.png");
 	//Sprite *closeselected = Sprite::create("CloseSelected.png");
 	//auto back_to_mainmenu = MenuItemSprite::create(
@@ -86,9 +88,11 @@ void GameFace::onTouchMoved(Touch *touch, Event *event)
 void GameFace::onTouchEnded(Touch *touch, Event *event)
 {
 	log("onTouchEnded");
+
 	//get OpenGL coord
 	Vec2 touchLocation = touch->getLocation();
-	//convert to now layer model coord system
+
+	//convert to this layer model coord system
 	touchLocation = this->convertToNodeSpace(touchLocation);
 
 	log("touchLocation (%f ,%f) ", touchLocation.x, touchLocation.y);
@@ -115,6 +119,7 @@ void GameFace::onTouchEnded(Touch *touch, Event *event)
 		}
 	}
 	log("playerPos (%f ,%f) ", playerPos.x, playerPos.y);
+
 	this->setPlayerPosition(playerPos);
 }
 
@@ -122,6 +127,7 @@ void GameFace::setPlayerPosition(Vec2 position)
 {
 	//从像素点坐标转化为瓦片坐标
 	Vec2 tileCoord = this->tileCoordFromPosition(position);
+
 	//获得瓦片的GID
 	int tileGid = _collidable->getTileGIDAt(tileCoord);
 
@@ -136,8 +142,10 @@ void GameFace::setPlayerPosition(Vec2 position)
 			return;
 		}
 	}
+
 	//move the sprite
 	_player->setPosition(position);
+
 	//roll the map
 	this->setViewpointCenter(_player->getPosition());
 }
@@ -156,9 +164,11 @@ void GameFace::setViewpointCenter(Vec2 position)
 	log("position (%f ,%f) ", position.x, position.y);
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
+
 	//可以防止，视图左边超出屏幕之外。
 	int x = MAX(position.x, visibleSize.width / 2);
 	int y = MAX(position.y, visibleSize.height / 2);
+
 	//可以防止，视图右边超出屏幕之外。
 	x = MIN(x, (_tileMap->getMapSize().width * _tileMap->getTileSize().width)
 		- visibleSize.width / 2);
@@ -167,6 +177,7 @@ void GameFace::setViewpointCenter(Vec2 position)
 
 	//屏幕中心点
 	Vec2 pointA = Vec2(visibleSize.width / 2, visibleSize.height / 2);
+
 	//使精灵处于屏幕中心，移动地图目标位置
 	Vec2 pointB = Vec2(x, y);
 	log("目标位置 (%f ,%f) ", pointB.x, pointB.y);
