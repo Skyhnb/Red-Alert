@@ -1,16 +1,16 @@
-#include "GameFaceScene.h"
+#include "GameScene.h"
 
 USING_NS_CC;
 
-Scene* GameFace::createScene()
+Scene* Game::createScene()
 {
 	auto scene = Scene::create();
-	auto layer = GameFace::create();
+	auto layer = Game::create();
 	scene->addChild(layer);
 	return scene;
 }
 
-bool GameFace::init()
+bool Game::init()
 {
 	if (!Layer::init())
 	{
@@ -57,7 +57,7 @@ bool GameFace::init()
 	//auto back_to_mainmenu = MenuItemSprite::create(
 	//	closenommal,
 	//	closeselected,
-	//	CC_CALLBACK_1(GameFaceScene::GamecloseCallback, this));
+	//	CC_CALLBACK_1(GameScene::GamecloseCallback, this));
 
 	//back_to_mainmenu->setPosition(Vec2(origin.x + visibleSize.width - back_to_mainmenu->getContentSize().width / 2,
 	//	origin.y + visibleSize.height - back_to_mainmenu->getContentSize().height / 2));
@@ -70,22 +70,22 @@ bool GameFace::init()
 }
 
 
-void GameFace::initTiledmap()
+void Game::initTiledmap()
 {
 
 }
-bool GameFace::onTouchBegan(Touch* touch, Event* event)
+bool Game::onTouchBegan(Touch* touch, Event* event)
 {
 	log("onTouchBegan");
 	return true;
 }
 
-void GameFace::onTouchMoved(Touch *touch, Event *event)
+void Game::onTouchMoved(Touch *touch, Event *event)
 {
 	log("onTouchMoved");
 }
 
-void GameFace::onTouchEnded(Touch *touch, Event *event)
+void Game::onTouchEnded(Touch *touch, Event *event)
 {
 	log("onTouchEnded");
 
@@ -123,7 +123,7 @@ void GameFace::onTouchEnded(Touch *touch, Event *event)
 	this->setPlayerPosition(playerPos);
 }
 
-void GameFace::setPlayerPosition(Vec2 position)
+void Game::setPlayerPosition(Vec2 position)
 {
 	//从像素点坐标转化为瓦片坐标
 	Vec2 tileCoord = this->tileCoordFromPosition(position);
@@ -150,14 +150,14 @@ void GameFace::setPlayerPosition(Vec2 position)
 	this->setViewpointCenter(_player->getPosition());
 }
 
-Vec2 GameFace::tileCoordFromPosition(Vec2 pos)
+Vec2 Game::tileCoordFromPosition(Vec2 pos)
 {
 	int x = pos.x / _tileMap->getTileSize().width;
 	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - pos.y) / _tileMap->getTileSize().height;
 	return Vec2(x, y);
 }
 
-void GameFace::setViewpointCenter(Vec2 position)
+void Game::setViewpointCenter(Vec2 position)
 {
 	log("setViewpointCenter");
 
@@ -189,7 +189,7 @@ void GameFace::setViewpointCenter(Vec2 position)
 
 }
 
-//void GameFaceScene::GamecloseCallback(cocos2d::Ref* pSender)
+//void GameScene::GamecloseCallback(cocos2d::Ref* pSender)
 //{
 //	Director::getInstance()->popScene();
 //}

@@ -4,7 +4,7 @@
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
 
-class GameFace : public cocos2d::Layer
+class Game : public cocos2d::Layer
 {
 public:
 
@@ -27,6 +27,6 @@ public:
 	void setViewpointCenter(cocos2d::Vec2 position);
 	//void GamecloseCallback(cocos2d::Ref* pSender);
 
-	CREATE_FUNC(GameFace);
+	CREATE_FUNC(Game);
 };
 #endif

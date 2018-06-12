@@ -1,6 +1,6 @@
-#include "LoadingScene.h"
+#include "HelloWorldScene.h"
 #include "SettingScene.h"
-#include "GameScene.h"
+#include "GameFaceScene.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
