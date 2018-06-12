@@ -1,29 +1,29 @@
-#include "HelloWorldScene.h"
+#include "LoadingScene.h"
 #include "SettingScene.h"
 #include "GameFaceScene.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* Loading::createScene()
 {
-    return HelloWorld::create();
+    return Loading::create();
 }
 
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
-    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
+    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in LoadingScene.cpp\n");
 }
 
-bool HelloWorld::init()
+bool Loading::init()
 {
     if ( !Scene::init() )
     {
         return false;
     }
 
-	log("HelloWorld init");
+	log("Loading init");
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -41,21 +41,21 @@ bool HelloWorld::init()
 
 	MenuItemSprite *startMenuItem = MenuItemSprite::create(startSpriteNormal,
 		startSpriteSelected,
-		CC_CALLBACK_1(HelloWorld::menuItemStartCallback, this));
+		CC_CALLBACK_1(Loading::menuItemStartCallback, this));
 	startMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(331, 450)));
 
 	// set image menu
 	MenuItemImage *settingMenuItem = MenuItemImage::create(
 		"settingsnormal.png",
 		"settingsdown.png",
-		CC_CALLBACK_1(HelloWorld::menuItemSettingCallback, this));
+		CC_CALLBACK_1(Loading::menuItemSettingCallback, this));
 	settingMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(331, 571)));
 
 	// help image menu
 	//MenuItemImage *helpMenuItem = MenuItemImage::create(
 	//	"help-up.png",
 	//	"help-down.png",
-	//	CC_CALLBACK_1(HelloWorld::menuItemHelpCallback, this));
+	//	CC_CALLBACK_1(Loading::menuItemHelpCallback, this));
 	//helpMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(860, 480)));
 
     // create menu, it's an autorelease object
@@ -66,20 +66,20 @@ bool HelloWorld::init()
     return true;
 }
 
-void HelloWorld::menuItemSettingCallback(Ref* pSender)
+void Loading::menuItemSettingCallback(Ref* pSender)
 {
 	auto sc = Setting::createScene();
 	auto reScene = TransitionJumpZoom::create(1.0f, sc);
 	Director::getInstance()->pushScene(reScene);
 }
 
-void HelloWorld::menuItemHelpCallback(Ref* pSender)
+void Loading::menuItemHelpCallback(Ref* pSender)
 {
 	MenuItem* item = (MenuItem*)pSender;
 	log("Touch Help %p", item);
 }
 
-void HelloWorld::menuItemStartCallback(Ref* pSender)
+void Loading::menuItemStartCallback(Ref* pSender)
 {
 	auto sc = GameFace::createScene();
 	auto reScene = TransitionFadeTR::create(1.0f, sc);
