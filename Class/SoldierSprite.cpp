@@ -1,5 +1,5 @@
 #include "SoldierSprite.h"
-int Soldier::n = 0;
+int Soldier::n = 0;//测试用
 Soldier* Soldier::createSoldier(Point position)
 {
 	Soldier* soldier = Soldier::create();
@@ -14,83 +14,64 @@ Soldier* Soldier::createSoldier(Point position)
 
 void Soldier::initSoldier(Point position)
 {
-	this->isSlected = false;
-	n++;
-	character = Sprite::create("soldier.png");
-	character->setScale(0.2);
-	character->setPosition(position);
-	character->setPositionY(position.y + 10*n);
-	this->addChild(character);
+	this->isActive = false;
+	n++;//测试用
+
+	hp = 50;
+	atk = 10;
+
+	character = Sprite::create("soldier.jpg");
+	character->setScale(0.5);
+    character->setPosition(position);
+	character->setPositionY(position.y + 80*n);//测试用
+	this->addChild(character);//非选中状态图
+
+	selected = Sprite::create("selected.jpg");
+	auto characterSize = character->getContentSize();
+	selected->setPosition(characterSize.width / 2, characterSize.height / 2);
+	selected->setOpacity(0);
+	character->addChild(selected);//选中状态图
+
 	listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(Soldier::onTouchBegan, this);
 	listener->setSwallowTouches(true);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);//触摸事件监听器
 }
 
 bool Soldier::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent)
 {
 	auto point = pTouch->getLocation();
 	auto position = this->character->getPosition();
+	this->isSelected = (
+		point.x > position.x - character->getContentSize().width / 4 &&
+		point.x<position.x + character->getContentSize().width / 4 &&
+		point.y>position.y - character->getContentSize().height / 4 &&
+		point.y < position.y + character->getContentSize().height / 4
+		);      //改变活动状态，传递鼠标选中指针
+
+
+
 	if (
-		point.x > position.x - character->getContentSize().width / 2 &&
-		point.x<position.x + character->getContentSize().width / 2 &&
-		point.y>position.y - character->getContentSize().height / 2 &&
-		point.y < position.y + character->getContentSize().height / 2
+		isSelected
 		)
-	{
-		this->isSlected = !isSlected;
-	}
-	else if (this->isSlected)
-	{
-		character->setPosition(point);
-		n--;
-	}
-	return false;
-
-}
-
-SoldierMenu* SoldierMenu::createSoldierMenu(Point position)
-{
-	SoldierMenu* menu = SoldierMenu::create();
-	if (menu)
-	{
-		menu->initSoldierMenu(position);
-		return menu;
-	}
-	CC_SAFE_DELETE(menu);
-	return NULL;
-}
-
-void SoldierMenu::initSoldierMenu(Point position)
-{
-	soldiermenu= Sprite::create("soldiermenu.png");
-	soldiermenu->setScale(0.5);
-	soldiermenu->setPosition(position);
-	this->addChild(soldiermenu);
-	listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(SoldierMenu::onTouchBegan, this);
-	listener->setSwallowTouches(true);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-}
-
-bool SoldierMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent)
-{
-	auto point = pTouch->getLocation();
-	auto position = this->soldiermenu->getPosition();
-	if (
-		point.x > position.x - soldiermenu->getContentSize().width / 2 &&
-		point.x<position.x + soldiermenu->getContentSize().width / 2 &&
-		point.y>position.y - soldiermenu->getContentSize().height / 2 &&
-		point.y < position.y + soldiermenu->getContentSize().height / 2
-		)
-	{
-		auto* soldier = Soldier::createSoldier(Point(200, 300));/*在这里修改出兵的位置*/
-		this->addChild(soldier);
+	{                           
+		
+		this->isActive = !isActive;
+		if (this->isActive)
+		{
+			selected->setOpacity(255);
+		}
+		else
+		{
+			selected->setOpacity(0);
+		}
 	}
 	
 	return false;
 
 }
+
+
 
 
 

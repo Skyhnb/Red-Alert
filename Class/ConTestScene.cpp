@@ -1,4 +1,4 @@
-#include "HelloWorldScene.h"
+#include "ConTestScene.h"
 #include "SimpleAudioEngine.h"
 #include"Construction.h"
 #include "ui/CocosGUI.h"
