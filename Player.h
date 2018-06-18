@@ -23,7 +23,8 @@ public:
 class SoldierMenu : public cocos2d::Layer
 {
 public:
-	static SoldierMenu* createSoldierMenu(Point position, Point SoldierPosition);/*在position（point型参数）处创建一个出兵按钮,出兵位置为SoldierPosition*/
+	static SoldierMenu* createSoldierMenu(Point position, Point SoldierPosition);
+	/*在position（point型参数）处创建一个出兵按钮,出兵位置为SoldierPosition*/
 	void initSoldierMenu(Point position, Point SoldierPosition);
 	Sprite* soldiermenu;
 	EventListenerTouchOneByOne* listener;

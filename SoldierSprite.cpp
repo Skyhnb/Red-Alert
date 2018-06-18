@@ -20,13 +20,13 @@ void Soldier::initSoldier(Point position)
 	hp = 50;
 	atk = 10;
 
-	character = Sprite::create("soldier.jpg");
+	character = Sprite::create("soldier.png");
 	character->setScale(0.5);
     character->setPosition(position);
 	character->setPositionY(position.y + 80*n);//测试用
 	this->addChild(character);//非选中状态图
 
-	selected = Sprite::create("selected.jpg");
+	selected = Sprite::create("selected.png");
 	auto characterSize = character->getContentSize();
 	selected->setPosition(characterSize.width / 2, characterSize.height / 2);
 	selected->setOpacity(0);

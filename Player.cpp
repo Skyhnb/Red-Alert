@@ -45,7 +45,7 @@ SoldierMenu* SoldierMenu::createSoldierMenu(Point position, Point SoldierPositio
 
 void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition)
 {
-	soldiermenu = Sprite::create("soldiermenu.jpg");
+	soldiermenu = Sprite::create("soldiermenu.png");
 	soldiermenu->setScale(1.0);
 	soldiermenu->setPosition(position);
 	this->addChild(soldiermenu);
