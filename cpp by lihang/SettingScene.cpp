@@ -22,19 +22,25 @@ bool Setting::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	bg = Sprite::create("setting-back.png");
-
+	bg = Sprite::create("background.png");
 	bg->setPosition(Vec2(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 2));
 	this->addChild(bg);
 
+	addMenuItem();
+
+	return true;
+}
+
+void Setting::addMenuItem()
+{
 	//ÒôÐ§
 	auto soundOnMenuItem = MenuItemImage::create(
-		"on.png",
-		"on.png");
+		"menu/on.png",
+		"menu/on.png");
 	auto soundOffMenuItem = MenuItemImage::create(
-		"off.png",
-		"off.png");
+		"menu/off.png",
+		"menu/off.png");
 
 	auto soundToggleMenuItem = MenuItemToggle::createWithCallback(CC_CALLBACK_1(Setting::menuSoundToggleCallback, this),
 		soundOffMenuItem,
@@ -44,11 +50,11 @@ bool Setting::init()
 
 	//ÒôÀÖ
 	auto musicOnMenuItem = MenuItemImage::create(
-		"on.png",
-		"on.png");
+		"menu/on.png",
+		"menu/on.png");
 	auto musicOffMenuItem = MenuItemImage::create(
-		"off.png",
-		"off.png");
+		"menu/off.png",
+		"menu/off.png");
 	auto musicToggleMenuItem = MenuItemToggle::createWithCallback(CC_CALLBACK_1(Setting::menuMusicToggleCallback, this),
 		musicOffMenuItem,
 		musicOnMenuItem,
@@ -57,8 +63,8 @@ bool Setting::init()
 
 	//Ok°´Å¥
 	auto okMenuItem = MenuItemImage::create(
-		"ok-down.png",
-		"ok-up.png",
+		"menu/ok-down.png",
+		"menu/ok-up.png",
 		CC_CALLBACK_1(Setting::menuOkCallback, this));
 
 	okMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(600, 510)));
@@ -66,9 +72,6 @@ bool Setting::init()
 	Menu* mn = Menu::create(soundToggleMenuItem, musicToggleMenuItem, okMenuItem, NULL);
 	mn->setPosition(Vec2::ZERO);
 	this->addChild(mn);
-
-
-	return true;
 }
 
 void Setting::menuOkCallback(Ref* pSender)
@@ -81,7 +84,6 @@ void Setting::menuSoundToggleCallback(Ref* pSender)
 	auto soundToggleMenuItem = (MenuItemToggle*)pSender;
 	log("soundToggleMenuItem %d", soundToggleMenuItem->getSelectedIndex());
 }
-
 
 void Setting::menuMusicToggleCallback(Ref* pSender)
 {

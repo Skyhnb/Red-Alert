@@ -2,6 +2,9 @@
 #define __CONSTRUCTION_H__
 
 #include "cocos2d.h"
+
+
+/*@name  王笑天*/
 /*建筑类，这里创建包含游戏建筑的Sprite*/
 
 //建筑种类

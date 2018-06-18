@@ -10,6 +10,7 @@ public:
 
     //take  
 	virtual bool init();
+	void addMenuItem();
 
 	void menuItemHelpCallback(cocos2d::Ref* pSender);
 	void menuItemStartCallback(cocos2d::Ref* pSender);
@@ -19,4 +20,4 @@ public:
     CREATE_FUNC(HelloWorld);
 };
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif 

@@ -9,9 +9,11 @@ class Setting : public cocos2d::Layer
 {
 public:
 	static cocos2d::Scene* createScene();
+	cocos2d::Sprite * bg;
 
 	virtual bool init();
-	cocos2d::Sprite * bg;
+	void addMenuItem();
+
 	void menuSoundToggleCallback(cocos2d::Ref* pSender);
 	void menuMusicToggleCallback(cocos2d::Ref* pSender);
 	void menuOkCallback(cocos2d::Ref* pSender);
