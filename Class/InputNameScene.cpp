@@ -36,7 +36,14 @@ bool InputNameScene::init()
 		origin.y + visibleSize.height / 2));
 	this->addChild(bg);
 
-	auto Name_Editbox = EditBox::create(CCSizeMake(250, 50), Scale9Sprite::create("ButtonNormal.png"));
+	auto OKItem = MenuItemImage::create("NAMEButtonSelected.png", "NAMEButtonSelected.png", CC_CALLBACK_1(InputNameScene::menuOKCallback, this));
+	OKItem->setPosition(Director::getInstance()->convertToGL(Vec2(540,640)));
+
+	auto menu = Menu::create(OKItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu);
+
+	auto Name_Editbox = EditBox::create(CCSizeMake(250, 50), Scale9Sprite::create("NAMEButtonNormal.png"));
 	Name_Editbox->setPosition(ccp(visibleSize.width / 4, visibleSize.height / 2));
 	Name_Editbox->setFontColor(Color3B(255, 0, 0));//设置字体颜色
 	Name_Editbox->setPlaceHolder("Name:");//设置预置文本 
@@ -60,3 +67,8 @@ void InputNameScene::editBoxTextChanged(cocos2d::extension::EditBox* editBox, co
 }
 void InputNameScene::editBoxReturn(cocos2d::extension::EditBox *editBox){}
 
+
+void InputNameScene::menuOKCallback(Ref* pSender)
+{
+
+}

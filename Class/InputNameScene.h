@@ -19,6 +19,7 @@ public:
 	virtual void editBoxTextChanged(cocos2d::extension::EditBox* editBox, const std::string &text);
 	virtual void editBoxReturn(cocos2d::extension::EditBox *editBox);
 
+	void menuOKCallback(Ref* pSender);
 	CREATE_FUNC(InputNameScene);
 
 };
