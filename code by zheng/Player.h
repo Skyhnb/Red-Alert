@@ -42,23 +42,34 @@ public:
 	void initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type);
 	CREATE_FUNC(SoldierMenu);
 
+	void update(float dt);
+
+	Point soldier_Position;
+	sol_type soldier_Type;
+	void create_Soldier();
+
 	Sprite* soldier_menu;
 
 	int cost;
+	int cd_time;
+	int waiting_soldier;
 
 	EventListenerTouchOneByOne* listener;
 	bool onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, Point SoldierPosition, sol_type soldier_type);
 };
+
 class ConstructionMenu : public cocos2d::Layer
 {
 public:
 	static  ConstructionMenu* createConstructionMenu(Point position, cons_type construct_type);/*在position（point型参数）处创建一个建筑按钮,方式为拖动*/
 	void initConstructionMenu(Point position, cons_type construct_type);
+	void update(float dt);
 
 	Sprite* construction_menu;
 	Sprite* construction;
 
 	int _power_cost;
+	int cd_time;
 
 	bool create_begin;
 	CREATE_FUNC(ConstructionMenu);

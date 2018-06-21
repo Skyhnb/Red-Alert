@@ -33,6 +33,7 @@ bool HelloWorld::init()
 	Player* localPlayer = Player::createPlayer();
 	Manager* manager = Manager::createManager();
 	manager->push_back(localPlayer);
+
 	auto* menu1 = SoldierMenu::createSoldierMenu(Point(600, 200), Point(200, 100),american);
 	auto* menu4= SoldierMenu::createSoldierMenu(Point(600, 200), Point(200, 100),dog);
 	auto* menu2 = ConstructionMenu::createConstructionMenu(Point(800, 200),power);

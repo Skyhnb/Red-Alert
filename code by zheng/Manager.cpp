@@ -97,10 +97,12 @@ bool Manager::onKeyReleased(EventKeyboard::KeyCode keycode, Event* pEvent)
 
 void Manager::attack(Soldier* attacker, Soldier* defender)
 {
+	attacker->_attacking = true;
 	defender->push_back_attacker(attacker);
 }
 void Manager::attack(Soldier* attacker, Construction* defender)
 {
+	attacker->_attacking = true;
 	defender->push_back_attacker(attacker);
 }
 

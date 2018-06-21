@@ -22,6 +22,7 @@ void Soldier::initSoldier(Point position, sol_type soldier_type)
 	  {
 		hp = 50;
 		atk = 10; 
+		range = 2000;
 		character = Sprite::create("soldier.jpg");
 		selected = Sprite::create("selected.jpg");
 	  }break;
@@ -29,6 +30,7 @@ void Soldier::initSoldier(Point position, sol_type soldier_type)
 	  {
 		hp = 20;
 		atk = 15;
+		range = 2000;
 		character = Sprite::create("dog.png");
 		selected = Sprite::create("dog_selected.png");
 	  }break;
@@ -59,6 +61,7 @@ void Soldier::initSoldier(Point position, sol_type soldier_type)
 }
 void Soldier::update(float dt)
 {
+	std::list<Soldier*>::iterator tem_attacker;
 	if (this->isActive)
 	{
 		selected->setOpacity(255);
@@ -66,8 +69,25 @@ void Soldier::update(float dt)
 	else
 	{
 		selected->setOpacity(0);
+	}//更新选中状态
+	for (attacker = attackers.begin(); attacker != attackers.end();)
+	{
+		if (((*attacker)->character->getPositionX())*((*attacker)->character->getPositionX())+
+			((*attacker)->character->getPositionY())*((*attacker)->character->getPositionY())>
+			((*attacker)->range)*((*attacker)->range))
+		{
+			tem_attacker = attacker;
+			attacker++;
+			(*tem_attacker)->_attacking = false;
+			attackers.erase(tem_attacker);
+		}
+		else
+		{
+			attacker++;
+		}
 	}
-}//更新选中状态
+	//更新攻击者信息
+}
 
 void Soldier::push_back_attacker(Soldier*attack)
 {
