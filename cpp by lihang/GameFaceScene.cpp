@@ -20,12 +20,13 @@ bool GameFace::init()
 
 	MyMap *_map = MyMap::create();
 	MySprite *_mysprite = MySprite::create();
-	
-	//通过指针访问另一个层
-	/*_map->spritelayer = _mysprite;*/
 
 	addChild(_map, 0);
 	addChild(_mysprite, 1);
+
+	//通过指针访问另一个层
+	_mysprite->maplayer = _map;
+
 	return true;
 }
 

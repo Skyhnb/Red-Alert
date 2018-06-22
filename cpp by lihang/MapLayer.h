@@ -13,16 +13,17 @@ public:
 	cocos2d::experimental::TMXLayer* _decoration;
 	cocos2d::Sprite* _player;
 	cocos2d::Sprite* _money;
+	cocos2d::Sprite* _base;
 
 	virtual bool init();
 	void initTiledmap();
-	void initSprite();
+	void initBase();
 
-	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
-	virtual void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event);
-	void onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, cocos2d::Event *event);
+	void rollLeft(float dt);
+	void rollRight(float dt);
+	void rollUp(float dt);
+	void rollDown(float dt);
 
-	//Vec2 tileCoordFromPosition(Vec2 pos);
 	void setViewpointCenter(cocos2d::Vec2 position);
 
 	CREATE_FUNC(MyMap);

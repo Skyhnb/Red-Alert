@@ -14,7 +14,7 @@ public:
 
 	//¼ÌĞøÓÎÏ·  
 	void menuContinueCallback(Object* pSender);
-
+	void menuSettingCallback(Object* pSender);
 	CREATE_FUNC(GamePause);
 };
 
