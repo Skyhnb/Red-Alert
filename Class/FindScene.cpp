@@ -3,11 +3,13 @@
 #include"FindScene.h"
 #include"OrderCode.h"
 #include"cocos2d.h"
+#include "createroom.h"
+
 
 USING_NS_CC;
 using namespace ui;
 
-int time; //计时器，每100f发送一次查询房间信息
+int timeloop; //计时器，每100f发送一次查询房间信息
 static Client*  client = nullptr;  //指向client，传输数据
 static std::string  _static_player_name; //玩家名字
 std::vector<std::string> room_owner; //房主名称
@@ -59,11 +61,11 @@ void FindScene::update(float delta)
 {
 	if (client->_is_searched)
 	{
-		time++;
+		timeloop++;
 
-		if (time / 100 > 1)
+		if (timeloop / 100 > 1)
 		{
-			time = 0;
+			timeloop = 0;
 			client->send_message(FIND_FOR_ROOM, "|||||||||||");
 		}
 
@@ -104,7 +106,7 @@ void FindScene::update(float delta)
 							client->_filter_mode = true;
 							client->order_type = button_owner_name;
 
-							auto transition= TransitionSlideInL::create(1.0f, roomscene::createScene(client, 1, _player_name));
+							auto transition= TransitionSlideInL::create(1.0f,  CreateRoom::createScene(client, 1, _player_name));
 							Director::getInstance()->pushScene(transition);
 						}
 					});
