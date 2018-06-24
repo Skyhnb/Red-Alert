@@ -4,15 +4,16 @@
 #include"OrderCode.h"
 #include"cocos2d.h"
 #include "createroom.h"
+#include "RoomScene.h"//liulanxinçš„å¤´æ–‡ä»¶
 
 
 USING_NS_CC;
 using namespace ui;
 
-int timeloop; //¼ÆÊ±Æ÷£¬Ã¿100f·¢ËÍÒ»´Î²éÑ¯·¿¼äĞÅÏ¢
-static Client*  client = nullptr;  //Ö¸Ïòclient£¬´«ÊäÊı¾İ
-static std::string  _static_player_name; //Íæ¼ÒÃû×Ö
-std::vector<std::string> room_owner; //·¿Ö÷Ãû³Æ
+int timeloop; //è®¡æ—¶å™¨ï¼Œæ¯100få‘é€ä¸€æ¬¡æŸ¥è¯¢æˆ¿é—´ä¿¡æ¯
+static Client*  client = nullptr;  //æŒ‡å‘clientï¼Œä¼ è¾“æ•°æ®
+static std::string  _static_player_name; //ç©å®¶åå­—
+std::vector<std::string> room_owner; //æˆ¿ä¸»åç§°
 
 Scene* FindScene::createScene(Client* cl, std::string name)
 {
@@ -56,6 +57,25 @@ bool FindScene::init()
 	return true;
 
 }
+
+create_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type) {
+                if (type == Widget::TouchEventType::ENDED) {
+
+                    auto server = LocalServer::create();
+                    this->addChild(server);
+                    auto client = Client::create(1);
+                    this->addChild(client);
+                    client->_filter_mode = true;
+                    client->sensitive_word = _playerName;
+                    client->_with_server = true;
+                    
+                    auto sc = CreateRoom::createScene();
+    		    auto reScene = TransitionMoveInL::create(1.0f, sc);
+    	            Director::getInstance()->pushScene(reScene);
+                    
+                }
+            });
+
 
 void FindScene::update(float delta)
 {
