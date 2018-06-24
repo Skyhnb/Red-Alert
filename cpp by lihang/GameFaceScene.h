@@ -5,6 +5,9 @@
 #include "SimpleAudioEngine.h"
 #include "SpriteLayer.h"
 #include "MapLayer.h"
+#include "SoldierSprite.h"
+#include "Player.h"
+#include"Manager.h"
 
 class GameFace : public cocos2d::Scene
 {

@@ -62,7 +62,7 @@ void Construction::initConstruction(Point position, cons_type construction_type)
 	attackers = std::list<Soldier*>();
 
 
-	character->setScale(0.5);
+	character->setScale(1.5);
 	character->setPosition(position);
 	this->addChild(character);//·ÇÑ¡ÖÐ×´Ì¬Í¼
 

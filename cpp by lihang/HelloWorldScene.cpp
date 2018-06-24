@@ -30,16 +30,16 @@ bool HelloWorld::init()
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	Sprite *bg = Sprite::create("background.jpg");
-
-	// position the label on the center of the screen
 	bg->setPosition(Vec2(origin.x + visibleSize.width / 2,
 		origin.y + visibleSize.height / 2));
 	this->addChild(bg);
+
 	addMenuItem();
 
     return true;
 }
 
+//添加开始、设置菜单
 void HelloWorld::addMenuItem()
 {
 	//start sprite
@@ -58,36 +58,23 @@ void HelloWorld::addMenuItem()
 		CC_CALLBACK_1(HelloWorld::menuItemSettingCallback, this));
 	settingMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(331, 621)));
 
-	// help image menu
-	//MenuItemImage *helpMenuItem = MenuItemImage::create(
-	//	"help-up.png",
-	//	"help-down.png",
-	//	CC_CALLBACK_1(HelloWorld::menuItemHelpCallback, this));
-	//helpMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(860, 480)));
-
-	// create menu, it's an autorelease object
 	auto menu = Menu::create(startMenuItem, settingMenuItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu);
 }
 
+//转到设置界面
 void HelloWorld::menuItemSettingCallback(Ref* pSender)
 {
 	auto sc = Setting::createScene();
-	auto reScene = TransitionJumpZoom::create(1.0f, sc);
+	auto reScene = TransitionFadeTR::create(1.0f, sc);
 	Director::getInstance()->pushScene(reScene);
 }
 
-void HelloWorld::menuItemHelpCallback(Ref* pSender)
-{
-	MenuItem* item = (MenuItem*)pSender;
-	log("Touch Help %p", item);
-}
-
+//转到输入名字界面
 void HelloWorld::menuItemStartCallback(Ref* pSender)
 {
 	auto sc = CinName::createScene();
 	auto reScene = TransitionFadeTR::create(1.0f, sc);
 	Director::getInstance()->pushScene(reScene);
-	/*Director::getInstance()->pushScene(sc);*/
 }
