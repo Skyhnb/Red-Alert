@@ -4,6 +4,8 @@
 #include "HelloWorldScene.h"
 #include "GameFaceScene.h"
 #include "SimpleAudioEngine.h"
+#include "CreateRoomScene.h"
+#include "RoomScene.hpp"
 
 USING_NS_CC;
 
@@ -59,7 +61,7 @@ bool CinName::init()
 
 void CinName::menuOkCallback(cocos2d::Ref* pSender)
 {
-	auto sc = GameFace::createScene();
+	auto sc = RoomScene::createScene();
 	auto reScene = TransitionFadeTR::create(1.0f, sc);
 	Director::getInstance()->pushScene(reScene);
 }

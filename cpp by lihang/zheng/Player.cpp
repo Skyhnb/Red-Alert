@@ -5,6 +5,7 @@ std::list<Soldier*> Player::playerSoldier = std::list<Soldier*>();
 std::list<Construction*> Player::playerConstruction= std::list<Construction*>();
 int Player::power_max=0;
 int Player::power_cost = 0;
+int Player::money = 0;
 Player* Player::createPlayer()
 {
 	Player* player = Player::create();
@@ -21,6 +22,7 @@ void Player::initPlayer()
 	listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(Player::onTouchBegan, this);
 	listener->setSwallowTouches(true);
+
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	this->scheduleUpdate();
 }
@@ -28,26 +30,44 @@ void Player::update(float dt)
 {
 	int temp_power = 0;
 	int temp_power_cost = 0;
-	for (iter = playerSoldier.begin(); iter != playerSoldier.end(); iter++)
+	std::list<Soldier*>::iterator tem_iter;
+	std::list<Construction*>::iterator tem_iter2;
+	for (iter = playerSoldier.begin(); iter != playerSoldier.end(); )
 	{
 		if ((*iter)->hp <= 0)
 		{
-			(*iter)->removeFromParent();
-		    playerSoldier.erase(iter);
+			tem_iter = iter;
+			iter++;
+			(*tem_iter)->removeFromParent();
+		    playerSoldier.erase(tem_iter);
+		}
+		else 
+		{
+			iter++;
 		}
 	}
-	for (iter2 = playerConstruction.begin(); iter2 != playerConstruction.end(); iter2++)
+	for (iter2 = playerConstruction.begin(); iter2 != playerConstruction.end(); )
 	{
 		if ((*iter2)->hp <= 0)
 		{
-			(*iter2)->removeFromParent();
-			playerConstruction.erase(iter2);
+			tem_iter2 = iter2;
+			iter2++;
+			(*tem_iter2)->removeFromParent();
+			playerConstruction.erase(tem_iter2);
+		}
+		else
+		{
+			iter2++;
 		}
 	}
 	for (iter2 = playerConstruction.begin(); iter2 != playerConstruction.end(); iter2++)
 	{
 		temp_power+=(*iter2)->produce_power;
 		temp_power_cost+=(*iter2)->cost_power;
+		if ((*iter2)->hp== 500 && (*iter2)->cost_power == 50)
+		{
+			money += 2;
+		}
 	}
 	power_max = temp_power;
 	power_cost = temp_power_cost;
@@ -93,32 +113,37 @@ Construction* Player::getSelectedConstruction()
 	}
 }
 
-SoldierMenu* SoldierMenu::createSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type)
+SoldierMenu* SoldierMenu::createSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type,Layer* layer)
 {
 	SoldierMenu* menu = SoldierMenu::create();
 	if (menu)
 	{
-		menu->initSoldierMenu(position, SoldierPosition,soldier_type);
+		menu->initSoldierMenu(position, SoldierPosition,soldier_type,layer);
 		return menu;
 	}
 	CC_SAFE_DELETE(menu);
 	return NULL;
 }
-
-void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type)
+void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type,Layer* layer)
 {
 	switch (soldier_type)
 	{
 	case(american):
 	{
-		soldier_menu = Sprite::create("soldiermenu.jpg");
+		soldier_menu = Sprite::create("soldiermenu.png");
+		cost = 20;
 	}break;
 	case(dog):
 	{
 		soldier_menu = Sprite::create("dogmenu.png");
+		cost = 10;
 	}break;
 	}
 	
+	cd_time = 300;
+	waiting_soldier = 0;
+	_layer = layer;
+
 	soldier_menu->setScale(1.0);
 	soldier_menu->setPosition(position);
 	this->addChild(soldier_menu);
@@ -127,8 +152,9 @@ void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_typ
 	listener->onTouchBegan = CC_CALLBACK_2(SoldierMenu::onTouchBegan, this, SoldierPosition,soldier_type);
 	listener->setSwallowTouches(true);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-}
+	this->scheduleUpdate();
 
+}
 bool SoldierMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, Point SoldierPosition ,sol_type soldier_type)
 {
 	auto point = pTouch->getLocation();
@@ -140,13 +166,34 @@ bool SoldierMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, Point SoldierPo
 		point.y < position.y + soldier_menu->getContentSize().height / 2
 		)
 	{
-		Soldier* soldier = Soldier::createSoldier(SoldierPosition,soldier_type);
-		this->addChild(soldier);
-		Player::playerSoldier.push_back(soldier);
+		if (cost > Player::money)
+		{
+			return false;
+		}
+		waiting_soldier++;
+		soldier_Position=SoldierPosition;
+		soldier_Type=soldier_type;
+		Player::money -= cost;
 	}
 
 	return false;
 
+}
+void SoldierMenu::update(float dt)
+{
+	cd_time++;
+	if (waiting_soldier > 0 && cd_time > 300)
+	{
+		create_Soldier();
+		waiting_soldier--;
+		cd_time = 0;
+	}
+}
+void SoldierMenu::create_Soldier()
+{
+	Soldier* soldier = Soldier::createSoldier(soldier_Position, soldier_Type);
+	_layer->addChild(soldier);
+	Player::playerSoldier.push_back(soldier);
 }
 
 ConstructionMenu* ConstructionMenu::createConstructionMenu(Point position, cons_type construct_type)
@@ -163,6 +210,7 @@ ConstructionMenu* ConstructionMenu::createConstructionMenu(Point position, cons_
 void ConstructionMenu::initConstructionMenu(Point position, cons_type construct_type)
 {
 	create_begin = false;
+	cd_time = 600;
 
 	switch (construct_type)
 	{
@@ -215,6 +263,11 @@ void ConstructionMenu::initConstructionMenu(Point position, cons_type construct_
 	listener->onTouchEnded = CC_CALLBACK_2(ConstructionMenu::onTouchEnded, this,construct_type);
 	listener->setSwallowTouches(false);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	this->scheduleUpdate();
+}
+void ConstructionMenu::update(float dt)
+{
+	cd_time++;
 }
 bool ConstructionMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent,cons_type construct_type)
 {
@@ -227,7 +280,7 @@ bool ConstructionMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent,cons_type c
 		point.y < position.y + construction_menu->getContentSize().height / 2
 		)
 	{
-		if (Player::power_cost + _power_cost > Player::power_max)
+		if (Player::power_cost + _power_cost > Player::power_max||cd_time<600)
 		{
 			return false;
 		}
@@ -258,6 +311,7 @@ void ConstructionMenu::onTouchEnded(CCTouch* pTouch, CCEvent* pEvent, cons_type 
 		this->addChild(construction);
 		Player::playerConstruction.push_back(construction);
 		create_begin = false;
+		cd_time = 0;
 	}
 }
 

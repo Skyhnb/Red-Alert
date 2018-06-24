@@ -28,7 +28,6 @@ public:
 
 	bool isSelected;
 
-	int cost_money;
 	int cost_power;
 	int produce_power;
 	int hp;

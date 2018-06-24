@@ -40,12 +40,20 @@ bool Manager::onTouchBegan(Touch* pTouch, Event* pEvent)
 
 	if (non_player_Selected)
 	{
+		for (soldier = players[0]->playerSoldier.begin(); soldier != players[0]->playerSoldier.end(); soldier++)
+		{
+			if ((*soldier)->isActive)
+			{
+				(*soldier)->stopAllActions();
+			}
+		}
 		for (soldier = (players[0]->playerSoldier).begin(); soldier!=(players[0]->playerSoldier).end(); soldier++)
 		{
 			if ((*soldier)->isActive)
 			{
-				MoveTo* moveto = MoveTo::create(1.0f, point);
-				(*soldier)->character->runAction(moveto);
+				MyMoveto* moveto = MyMoveto::create(20.0f, point, (*soldier)->speed);
+				(*soldier)->runAction(moveto);
+				(*soldier)->_attacking = false;
 			}
 		}
 	}
@@ -55,7 +63,19 @@ bool Manager::onTouchBegan(Touch* pTouch, Event* pEvent)
 		{
 			if ((*soldier)->isActive&&!players[0]->no_soldier_Selected)
 			{
-				attack((*soldier), players[0]->getSelectedSoldier());
+				if ((*soldier) != players[0]->getSelectedSoldier())
+				{
+					/*Soldier* _attacker = *soldier;
+					Soldier* _target = players[0]->getSelectedSoldier();
+					MyMoveto* moveto = MyMoveto::create(1.0f, players[0]->getSelectedSoldier()->character->getPosition(), (*soldier)->speed);
+					//CallFunc* attack_func = CallFunc::create(CC_CALLBACK_0(Manager::attack, this,(*soldier), players[0]->getSelectedSoldier()));
+					CallFunc* attack_func = CallFunc::create([this,&_attacker,&_target]() {
+						attack(_attacker, _target);
+					});
+					Action * action = Sequence::create(moveto, attack_func, NULL);
+					(*soldier)->runAction(action);*/
+					attack((*soldier), players[0]->getSelectedSoldier());
+				}
 			}
 			else if ((*soldier)->isActive && !players[0]->no_construction_Selected)
 			{
@@ -97,10 +117,12 @@ bool Manager::onKeyReleased(EventKeyboard::KeyCode keycode, Event* pEvent)
 
 void Manager::attack(Soldier* attacker, Soldier* defender)
 {
+	attacker->_attacking = true;
 	defender->push_back_attacker(attacker);
 }
 void Manager::attack(Soldier* attacker, Construction* defender)
 {
+	attacker->_attacking = true;
 	defender->push_back_attacker(attacker);
 }
 

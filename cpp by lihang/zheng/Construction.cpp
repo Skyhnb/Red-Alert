@@ -23,7 +23,6 @@ void Construction::initConstruction(Point position, cons_type construction_type)
 		  hp = 500;
 		  produce_power = 200;
 		  cost_power = 0;
-		  cost_money=100;
 	  } break;
 	case(miner):
 	  {
@@ -31,38 +30,34 @@ void Construction::initConstruction(Point position, cons_type construction_type)
 		  hp = 500;
 		  produce_power = 0;
 		  cost_power = 50;
-		  cost_money = 100;
  	  }break;
 	case(base):
 	  {
 		  character = Sprite::create("base.png");
-		  hp = 500;
-		  produce_power = 200;
+		  hp = 1000;
+		  produce_power =0;
 	  	  cost_power = 0;
-		  cost_money = 100;
 	  }break;
 	case(armycamp):
 	  {
 		  character = Sprite::create("armycamp.png");
-		  hp = 500;
-		  produce_power = 200;
-		  cost_power = 0;
-		  cost_money = 100;
+		  hp = 300;
+		  produce_power = 0;
+		  cost_power = 50;
 	  }break;
 	case(tankfac):
 	  {
 		  character = Sprite::create("tankfac.png");
 		  hp = 500;
-		  produce_power = 200;
-		  cost_power = 0;
-		  cost_money = 100;
+		  produce_power = 0;
+		  cost_power = 200;
 	  }break;
 	}
 
 	attackers = std::list<Soldier*>();
 
 
-	character->setScale(1.5);
+	character->setScale(0.5);
 	character->setPosition(position);
 	this->addChild(character);//非选中状态图
 
@@ -77,7 +72,38 @@ void Construction::initConstruction(Point position, cons_type construction_type)
 
 void Construction::update(float dt)
 {
-	
+	std::list<Soldier*>::iterator tem_attacker;
+	for (attacker = attackers.begin(); attacker != attackers.end();)
+	{
+		 if ((*attacker) == nullptr)
+			{
+				tem_attacker = attacker;
+				attacker++;
+				attackers.erase(tem_attacker);
+			}
+		else if (((*attacker)->character->getPositionX())*((*attacker)->character->getPositionX()) +
+			((*attacker)->character->getPositionY())*((*attacker)->character->getPositionY())>
+			((*attacker)->range)*((*attacker)->range))
+		{
+			tem_attacker = attacker;
+			attacker++;
+			(*tem_attacker)->_attacking = false;
+			attackers.erase(tem_attacker);
+		}
+		else
+		{
+			attacker++;
+		}
+	}
+	for (attacker = attackers.begin(); attacker != attackers.end();)
+	{
+		tem_attacker = attacker;
+		attacker++;
+		if ((*tem_attacker)->_attacking = false)
+		{
+			attackers.erase(tem_attacker);
+		}
+	}
 }//更新状态
 
 

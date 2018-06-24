@@ -29,11 +29,14 @@ public:
 
 	bool isSelected;
 	bool isActive;
+	bool _attacking;
 
 	static int n;//≤‚ ‘”√
 	int atk ;
+	int hp;
+
 	int range;
-	int hp ;
+	int speed;
 };
 
 
