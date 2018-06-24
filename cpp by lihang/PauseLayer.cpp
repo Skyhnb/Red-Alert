@@ -1,4 +1,5 @@
 #include "PauseLayer.h"
+#include "SettingScene.h"
 
 USING_NS_CC;
   
@@ -41,17 +42,32 @@ bool GamePause::init()
 		"menu/backdown.png",
 		this,
 		menu_selector(GamePause::menuContinueCallback));
+	pContinueItem->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 3 * 2));
 
-	pContinueItem->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 30));
+	//设置
+	MenuItemImage *settingMenuItem = MenuItemImage::create(
+		"menu/settingsnormal.png",
+		"menu/settingsdown.png",
+		CC_CALLBACK_1(GamePause::menuSettingCallback, this));
+	settingMenuItem->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 3));
 
-	Menu* pMenu = Menu::create(pContinueItem, NULL);
+	Menu* pMenu = Menu::create(pContinueItem, settingMenuItem, NULL);
 	pMenu->setPosition(Vec2::ZERO);
 	this->addChild(pMenu, 3);
 
 	return true;
 }
 
+//回到游戏
 void GamePause::menuContinueCallback(Object* pSender)
 {
     Director::sharedDirector()->popScene();
+}
+
+//转到设置
+void GamePause::menuSettingCallback(Object* pSender)
+{
+	auto sc = Setting::createScene();
+	auto reScene = TransitionFadeTR::create(1.0f, sc);
+	Director::getInstance()->pushScene(reScene);
 }

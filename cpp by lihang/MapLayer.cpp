@@ -14,17 +14,16 @@ bool MyMap::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-
 	initTiledmap();
 
-	initSprite();
+	initBase();
 
 	setTouchEnabled(true);
 
 	return true;
 }
 
-//初始化地图、精灵
+//初始化地图
 void MyMap::initTiledmap()
 {
 	_tileMap = experimental::TMXTiledMap::create("map/Map1.tmx");
@@ -34,40 +33,18 @@ void MyMap::initTiledmap()
 	_decoration->setVisible(true);
 }
 
-void MyMap::initSprite()
+//初始化主基地
+void MyMap::initBase()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
-	_player = Sprite::create("ninja.png");
-	_player->setPosition(Vec2(visibleSize.width/2,visibleSize.height/2));
-	addChild(_player, 2, 200);
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	_base = Sprite::create("base.png");
+	_base->setPosition(Vec2(origin.x + visibleSize.width / 3, origin.y + visibleSize.height / 3));
+	_base->setScale(1.5);
+	addChild(_base, 2, 200);
 }
 
-bool MyMap::onTouchBegan(Touch* touch, Event* event)
-{
-	log("onTouchBegan");
-	return false;
-}
-
-//drag the map
-void MyMap::onTouchesMoved(const std::vector<Touch*>& touches, Event *event)
-{
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-	auto diff = touches[0]->getDelta();
-	auto node = getChildByTag(200);
-	auto currentPos = node->getPosition();
-	Vec2 pointA = Vec2(visibleSize.width / 2, visibleSize.height / 2);
-
-	node->setPosition(currentPos - diff);
-	this->setViewpointCenter(_player->getPosition());
-}
-
-void MyMap::onTouchEnded(Touch *touch, Event *event)
-{
-	log("onTouchEnded");
-	return;
-}
-
+//使位于视野中心
 void MyMap::setViewpointCenter(Vec2 position)
 {
 	log("setViewpointCenter");
@@ -99,10 +76,58 @@ void MyMap::setViewpointCenter(Vec2 position)
 	this->setPosition(offset);
 }
 
-//将ui坐标转化为瓦片坐标
-//Vec2 MyMap::tileCoordFromPosition(Vec2 pos)
-//{
-//	int x = pos.x / _tileMap->getTileSize().width;
-//	int y = ((_tileMap->getMapSize().height * _tileMap->getTileSize().height) - pos.y) / _tileMap->getTileSize().height;
-//	return Vec2(x, y);
-//}
+//地图左移，视野右移
+void MyMap::rollRight(float dt)
+{
+	Vec2 pos = this->getPosition();
+	if (pos.x <= 0 && pos.x >= -_tileMap->getMapSize().width * (_tileMap->getTileSize().width - 1)+1080)
+	{
+		pos.x -= 1;
+		if (pos.x <= 0 && pos.x >= -_tileMap->getMapSize().width * (_tileMap->getTileSize().width - 1)+1080)
+		{
+		    this->setPosition(pos);
+		}
+	}
+}
+
+//地图右移，视野左移
+void MyMap::rollLeft(float dt)
+{
+	Vec2 pos = this->getPosition();
+	if (pos.x <= 0 && pos.x >=  -_tileMap->getMapSize().width * (_tileMap->getTileSize().width - 1)+1080)
+	{
+		pos.x += 1;
+		if (pos.x <= 0 && pos.x >=  -_tileMap->getMapSize().width * (_tileMap->getTileSize().width - 1)+1080)
+		{
+			this->setPosition(pos);
+		}
+	}
+}
+
+//地图上移，视野下移
+void MyMap::rollDown(float dt)
+{
+	Vec2 pos = this->getPosition();
+	if (pos.y <= 0 && pos.y >= -_tileMap->getMapSize().height * (_tileMap->getTileSize().height - 1)+810)
+	{
+		pos.y += 1;
+		if (pos.y <= 0 && pos.y >= -_tileMap->getMapSize().height * (_tileMap->getTileSize().height - 1)+810)
+		{
+			this->setPosition(pos);
+		}
+	}
+}
+
+//地图下移，视野上移
+void MyMap::rollUp(float dt)
+{
+	Vec2 pos = this->getPosition();
+	if (pos.y <= 0 && pos.y >= -_tileMap->getMapSize().height * (_tileMap->getTileSize().height - 1)+810)
+	{
+		pos.y -= 1;
+		if (pos.y <= 0 && pos.y >= -_tileMap->getMapSize().height * (_tileMap->getTileSize().height - 1)+810)
+		{
+			this->setPosition(pos);
+		}
+	}
+}

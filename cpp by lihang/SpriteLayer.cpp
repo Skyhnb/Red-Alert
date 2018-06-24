@@ -5,7 +5,6 @@ USING_NS_CC;
 
 bool MySprite::init()
 {
-
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -14,11 +13,12 @@ bool MySprite::init()
 	this->schedule(schedule_selector(MySprite::updateTime),1.0f, kRepeatForever,0);
 	this->schedule(schedule_selector(MySprite::updateMoney), 1.0f, kRepeatForever, 0);
 	updatePower();
-
+	
+	//暂停按钮
 	auto pauseItem = MenuItemImage::create(
 		"menu/pause.png",
 		"menu/pauserelease.png",
-		CC_CALLBACK_1(MySprite::menuCloseCallback, this));
+		CC_CALLBACK_1(MySprite::menuPauseCallback, this));
 
 	pauseItem->setPosition(Vec2(origin.x + visibleSize.width - pauseItem->getContentSize().width / 2,
 		origin.y + visibleSize.height - pauseItem->getContentSize().height / 2));
@@ -26,10 +26,100 @@ bool MySprite::init()
 	auto menu = Menu::create(pauseItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
+
+	maplayer = MyMap::create();
+
+	//创建鼠标监听
+	auto listener = EventListenerMouse::create();
+
+	//分发MouseMove事件
+	listener->onMouseMove = CC_CALLBACK_1(MySprite::mousemove, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, _money);
+
+	//创建项菜单
+	Player* localPlayer = Player::createPlayer();
+	Manager* manager = Manager::createManager();
+	manager->push_back(localPlayer);
+	auto* menu1 = SoldierMenu::createSoldierMenu(Point(500, 120), Point(200, 100), american);
+	auto* menu4 = SoldierMenu::createSoldierMenu(Point(700, 120), Point(200, 100), dog);
+	auto* menu2 = ConstructionMenu::createConstructionMenu(Point(100, 120), power);
+	auto* menu3 = ConstructionMenu::createConstructionMenu(Point(300, 120), miner);
+	addChild(menu1, 10);
+	addChild(menu2, 10);
+	addChild(menu3, 10);
+	addChild(menu4, 10);
+	addChild(localPlayer, 9);
+	addChild(manager, 5);//注意优先级不能变
+
 	return true;
 }
 
-void MySprite::menuCloseCallback(cocos2d::Ref* pSender)
+//鼠标悬停视野移动
+void MySprite::mousemove(Event* event)
+{
+	EventMouse* e = (EventMouse*)event;
+	float x = e->getCursorX();
+	float y = e->getCursorY();
+
+	//左
+	if (x >= 0 && x <= 25)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollLeft), 1.0f / 600, kRepeatForever, 0);
+	}
+	else if (x > 25 && x <= 50)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollLeft), 1.0f / 300, kRepeatForever, 0);
+	}
+	else
+	{
+		this->maplayer->unschedule(schedule_selector(MyMap::rollLeft));
+	}
+
+	//右
+	if (x >= 1255 && x <= 1280)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollRight), 1.0f / 600, kRepeatForever, 0);
+	}
+	else if (x >= 1230 && x < 1255)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollRight), 1.0f / 300, kRepeatForever, 0);
+	}
+	else
+	{
+		this->maplayer->unschedule(schedule_selector(MyMap::rollRight));
+	}
+
+	//下
+    if (y >= 0 && y <= 20)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollDown), 1.0f / 600, kRepeatForever, 0);
+	}
+	else if (y > 20 && y <= 40)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollDown), 1.0f / 300, kRepeatForever, 0);
+	}
+	else
+	{
+		this->maplayer->unschedule(schedule_selector(MyMap::rollDown));
+	}
+
+	//上
+	if (y >= 940 && y <= 960)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollUp), 1.0f / 600, kRepeatForever, 0);
+	}
+	else if (y >= 920 && y < 940)
+	{
+		this->maplayer->schedule(schedule_selector(MyMap::rollUp), 1.0f / 300, kRepeatForever, 0);
+	}
+	else
+	{
+		this->maplayer->unschedule(schedule_selector(MyMap::rollUp));
+	}
+}
+
+//暂停操作
+void MySprite::menuPauseCallback(cocos2d::Ref* pSender)
 {
 	//得到窗口的大小  
 	Size visibleSize = Director::sharedDirector()->getVisibleSize();
@@ -45,6 +135,7 @@ void MySprite::menuCloseCallback(cocos2d::Ref* pSender)
 	Director::sharedDirector()->pushScene(GamePause::scene(renderTexture));
 }
 
+//初始化金钱、电力、时间背景
 void MySprite::initSpritebg()
 {
 	_money = Sprite::create("money.png");
@@ -58,6 +149,7 @@ void MySprite::initSpritebg()
 	addChild(_time);
 }
 
+//随时间更新金钱
 void MySprite::updateMoney(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -74,6 +166,7 @@ void MySprite::updateMoney(float dt)
 	this->addChild(moneylable, 5, GameMoney);
 }
 
+//更新电力
 void MySprite::updatePower()
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
@@ -82,18 +175,18 @@ void MySprite::updatePower()
 	{
 		this->removeChildByTag(GamePower);
 	}
-	__String *power = __String::createWithFormat("%d / %d", this->usedpower, this->power);
-	auto powerlable = Label::createWithTTF(power->getCString(),
+	__String *power1 = __String::createWithFormat("%d / %d", this->usedpower, this->power1);
+	auto powerlable = Label::createWithTTF(power1->getCString(),
 		"fonts/Marker Felt.ttf", 18);
 	powerlable->setPosition(Vec2(926, 932));
 	this->addChild(powerlable, 5, GamePower);
 }
 
+//计时
 void MySprite::updateTime(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	nSecond++;
-	money += 5;
 	if (nSecond == 60) {
 		nSecond = 0;
 		nMinute++;

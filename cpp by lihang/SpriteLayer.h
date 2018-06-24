@@ -5,6 +5,10 @@
 #define GameTime 102
 
 #include "cocos2d.h"
+#include "SoldierSprite.h"
+#include "Player.h"
+#include "Manager.h"
+#include "MapLayer.h"
 
 class MySprite : public cocos2d::Layer
 {
@@ -14,19 +18,22 @@ public:
 	int nHour = 0;
 	int nMinute = 0;
 	int nSecond = 0;
-	int power = 0;
+	int power1 = 0;
 	int usedpower = 0;
 	int money = 0;
 
 	cocos2d::Sprite *_money;
 	cocos2d::Sprite *_power;
 	cocos2d::Sprite *_time;
+	cocos2d::Sprite *_base;
+	MyMap* maplayer;
 
-	void menuCloseCallback(cocos2d::Ref* pSender);
+	void menuPauseCallback(cocos2d::Ref* pSender);
 	void initSpritebg();
 	void updateMoney(float dt);
 	void updatePower();
 	void updateTime(float dt);
+	void mousemove(Event* event);
 
 	CREATE_FUNC(MySprite);
 };

@@ -10,6 +10,8 @@ class Setting : public cocos2d::Layer
 public:
 	static cocos2d::Scene* createScene();
 	cocos2d::Sprite * bg;
+	cocos2d::__String *sound;
+	cocos2d::__String *music;
 
 	virtual bool init();
 	void addMenuItem();
