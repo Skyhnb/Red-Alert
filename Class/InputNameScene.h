@@ -2,12 +2,16 @@
 #define _INPUTNAMESCENE_H_
 #include "cocos2d.h"  
 #include "cocos-ext.h"
+#include "ui/CocosGUI.h"
 
 
 USING_NS_CC_EXT;
 
 class InputNameScene : public cocos2d::Layer, public EditBoxDelegate
 {
+protected:
+	std::string     _playerName;            //Íæ¼ÒÃû³Æ
+
 public:
 
 	static cocos2d::Scene* createScene();
@@ -19,7 +23,6 @@ public:
 	virtual void editBoxTextChanged(cocos2d::extension::EditBox* editBox, const std::string &text);
 	virtual void editBoxReturn(cocos2d::extension::EditBox *editBox);
 
-	void menuOKCallback(Ref* pSender);
 	CREATE_FUNC(InputNameScene);
 
 };

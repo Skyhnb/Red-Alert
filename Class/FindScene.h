@@ -9,7 +9,7 @@
 
 USING_NS_CC;
 
-/*房间搜索界面，显示房间列表，选择创建或加入某个房间*/
+/*房间搜索界面，显示房间列表，选择加入某个房间*/
 
 class FindScene : public cocos2d:: Layer
 {

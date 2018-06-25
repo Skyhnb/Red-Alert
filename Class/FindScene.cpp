@@ -3,8 +3,8 @@
 #include"FindScene.h"
 #include"OrderCode.h"
 #include"cocos2d.h"
-#include "createroom.h"
-#include "RoomScene.h"//liulanxin的头文件
+
+#include "RoomScene.h"
 
 
 USING_NS_CC;
@@ -58,24 +58,6 @@ bool FindScene::init()
 
 }
 
-create_button->addTouchEventListener([=](Ref* pSender, Widget::TouchEventType type) {
-                if (type == Widget::TouchEventType::ENDED) {
-
-                    auto server = LocalServer::create();
-                    this->addChild(server);
-                    auto client = Client::create(1);
-                    this->addChild(client);
-                    client->_filter_mode = true;
-                    client->sensitive_word = _playerName;
-                    client->_with_server = true;
-                    
-                    auto sc = CreateRoom::createScene();
-    		    auto reScene = TransitionMoveInL::create(1.0f, sc);
-    	            Director::getInstance()->pushScene(reScene);
-                    
-                }
-            });
-
 
 void FindScene::update(float delta)
 {
@@ -110,8 +92,8 @@ void FindScene::update(float delta)
 				{
 					room_owner.push_back(owner_name);
 
-					auto space = Button::create("PlayerBar.png", "PlayerBar.png");
-					auto enter_in = Button::create("RoomList_connect.png");
+					auto space = Button::create("NAMEButtonNormal.png", "NAMEButtonNormal.png");
+					auto enter_in = Button::create("enterroomselected.png");
 					space->addChild(enter_in);
 
 					enter_in->setPosition(Vec2(space->getContentSize().width / 6 * 5, space->getContentSize().height / 2));
@@ -126,7 +108,7 @@ void FindScene::update(float delta)
 							client->_filter_mode = true;
 							client->order_type = button_owner_name;
 
-							auto transition= TransitionSlideInL::create(1.0f,  CreateRoom::createScene(client, 1, _player_name));
+							auto transition= TransitionSlideInL::create(1.0f,  RoomScene::createScene(client, 1, _player_name));
 							Director::getInstance()->pushScene(transition);
 						}
 					});
