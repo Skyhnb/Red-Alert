@@ -9,9 +9,11 @@
 #include "ui/CocosGUI.h"
 
 USING_NS_CC_EXT;
+USING_NS_CC;
+using namespace ui;
 
 /*网络选择界面，暂时只有局域网功能*/
-class NetMenu :public cocos2d::Layer,public EditBoxDelegate
+class NetMenu :public cocos2d::Layer
 {
 protected:
 	std::string _player_name;  // 玩家名称
@@ -24,9 +26,7 @@ public:
 
 	virtual bool init();
 
-	CREATE_FUNC(NetMenu);
 
-	void textFieldEvent(Ref *pSender, cocos2d::ui::TextField::EventType type);
 };
 
 #endif // ! _CHOOSENET_H

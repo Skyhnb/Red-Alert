@@ -7,6 +7,7 @@
 #include "RoomScene.h"
 
 
+USING_NS_CC_EXT;
 USING_NS_CC;
 using namespace ui;
 
@@ -33,7 +34,7 @@ bool FindScene::init()
 {
 	_player_name = _static_player_name;
 
-	if (!Layer::init)
+	if (!Layer::init())
 	{
 		return false;
 	}
@@ -43,14 +44,26 @@ bool FindScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto RoomListBg = Sprite::create();
+	auto RoomListBg = Sprite::create("roombg.jpg");
 	RoomListBg->setPosition(origin / 2 + visibleSize / 2);
 	_room_list_bg = RoomListBg;
 	this->addChild(RoomListBg, 1);
 
-	auto bg = Sprite::create("roombg.png");
+	auto bg = Sprite::create("background1.jpg");
 	bg->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(bg);
+
+	Sprite *startSpriteNormal = Sprite::create("startnormal.png");
+	Sprite *startSpriteSelected = Sprite::create("startdown.png");
+
+	MenuItemSprite *startMenuItem = MenuItemSprite::create(startSpriteNormal,
+		startSpriteSelected,
+		CC_CALLBACK_1(FindScene::menuNextCallback, this));
+	startMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(720,640)));
+	// create menu, it's an autorelease object
+	auto menu = Menu::create(startMenuItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
 
 	this->scheduleUpdate();
 
@@ -124,4 +137,9 @@ void FindScene::update(float delta)
 			}
 		}
 	}
+}
+
+void FindScene::menuNextCallback(cocos2d::Ref* pSender)
+{
+
 }

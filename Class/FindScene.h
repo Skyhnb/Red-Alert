@@ -5,9 +5,13 @@
 #include "cocos2d.h"
 #include"Server.h"
 #include "Client.h"
+#include <stdio.h>
+#include "ui/CocosGUI.h"
+
 
 
 USING_NS_CC;
+using namespace ui;
 
 /*房间搜索界面，显示房间列表，选择加入某个房间*/
 
@@ -30,6 +34,8 @@ public:
 	/*更新函数，定时调用*/
 
 	void update(float delta);
+
+	void menuNextCallback(cocos2d::Ref* pSender);
 
 	CREATE_FUNC(FindScene);
 

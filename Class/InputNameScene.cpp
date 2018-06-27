@@ -1,16 +1,16 @@
-#include<cocos2d.h>
+
 #include<iostream>
 #include"InputNameScene.h"
 #include <stdio.h>
-#include "ui/CocosGUI.h"
 #include"FindScene.h"
 #include"OrderCode.h"
 #include"cocos2d.h"
-#include "cocos-ext.h"
 #include "RoomScene.h"
 
 
+USING_NS_CC_EXT;
 USING_NS_CC;
+using namespace ui;
 
 /*PlayerData Player;*//*这个玩家数据类应该定义在GameScene里面这里做测试用，用来储存玩家输入的姓名*/
 //std::string myname;
@@ -33,7 +33,6 @@ bool InputNameScene::init()
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
 
 
 	Sprite *bg = Sprite::create("background1.jpg");

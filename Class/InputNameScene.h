@@ -6,6 +6,8 @@
 
 
 USING_NS_CC_EXT;
+USING_NS_CC;
+using namespace ui;
 
 class InputNameScene : public cocos2d::Layer, public EditBoxDelegate
 {

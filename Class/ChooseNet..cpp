@@ -3,8 +3,8 @@
 #include "FindScene.h"
 #include "ui/CocosGUI.h"
 
+USING_NS_CC_EXT;
 USING_NS_CC;
-
 using namespace ui;
 
 Scene* NetMenu::createScene()
@@ -41,7 +41,6 @@ bool NetMenu::init()
 
 	auto thisObject = this;
 
-	//===================local network button============================
 
 	auto local_button = Button::create("LocalFight.png");
 

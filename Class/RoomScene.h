@@ -7,6 +7,12 @@
 #include"Client.h"
 #include"ui/CocosGUI.h"
 #include "cocos-ext.h"
+
+USING_NS_CC_EXT;
+USING_NS_CC;
+using namespace ui;
+
+
 class RoomScene :public cocos2d::Layer
 {
 protected:

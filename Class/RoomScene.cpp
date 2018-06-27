@@ -3,6 +3,7 @@
 #include "RoomScene.h"
 #include"OrderCode.h"
 
+USING_NS_CC_EXT;
 USING_NS_CC;
 using namespace ui;
 
@@ -11,14 +12,6 @@ static Client*  client = nullptr;
 static std::string player_name;
 #define CLIENT_MODE 1
 #define SERVER_MODE 2
-
-static int loop;
-bool    finish_create;
-int     player_count;
-int     current_count;
-int     loop_you_in;
-bool    if_initial;
-bool    if_self_joined;
 
 Scene* RoomScene::createScene(Client* c, int mode, std::string _playerName)
 {
@@ -48,25 +41,22 @@ bool RoomScene::init()
 	// get the origin's position in opengl coordinate
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	auto room = Sprite::create("roombg.png");
+	auto room = Sprite::create("roombg.jpg");
 	this->addChild(room);
 	room->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 
 	_chatWindow = cocos2d::ui::TextField::create("input words here", "Arial", 30);
 	_chatWindow->setMaxLengthEnabled(true);
 	_chatWindow->setMaxLength(20);
-	_chatWindow->setPosition(Point(_room_ptr->getContentSize().width / 3 * 1.2,
-		(_room_ptr->getContentSize().height - 90) / 6 * 1));
+	_chatWindow->setPosition(Vec2(320,720));
 	_chatWindow->addEventListener(CC_CALLBACK_2(RoomScene::textFieldEvent, this));
 
 	room->addChild(_chatWindow, 1);
 
-	auto send_message_button = Button::create("button.png");
+	auto send_message_button = Button::create("ButtonNormal.png");
 	room->addChild(send_message_button);
 	send_message_button->cocos2d::Node::setScale(0.7);
-	send_message_button->setPosition(Vec2(
-		_room_ptr->getContentSize().width / 2 * 1.7,
-		(_room_ptr->getContentSize().height - 90) / 6 * 1));
+	send_message_button->setPosition(Vec2(640,720));
 	send_message_button->setTitleText("send message");
 	send_message_button->setTitleFontSize(20);
 	send_message_button->addTouchEventListener([&](Ref* pSender, Widget::TouchEventType type) {
