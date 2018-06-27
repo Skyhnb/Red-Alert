@@ -5,6 +5,7 @@
 #include<list>
 #include"SoldierSprite.h"
 #include"Construction.h"
+#include"MyMoveto.h"
 USING_NS_CC;
 class Player :public  cocos2d::Node
 {
@@ -27,7 +28,15 @@ public:
 	bool onTouchBegan(CCTouch* pTouch, CCEvent* pEvent);
 	bool no_soldier_Selected;
 	bool no_construction_Selected;
-	bool non_object_Selected;
+	bool non_object_Selected;//传递选中信息
+
+	static bool construction_commit;
+	static bool tank_commit;
+	static bool soldier_commit;//传递造兵，建筑许可
+
+	static Point soldier_create_position;
+	static Point tank_create_position;
+	static Point gather_position;
 
 	Soldier*getSelectedSoldier();//获取被选中小兵
 	Construction* getSelectedConstruction();//获取被选中建筑
@@ -38,21 +47,22 @@ public:
 class SoldierMenu : public cocos2d::Layer
 {
 public:
-	static SoldierMenu* createSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type);/*在position（point型参数）处创建一个出兵按钮,出兵位置为SoldierPosition*/
-	void initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type);
+	static SoldierMenu* createSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type,Layer* layer);/*在position（point型参数）处创建一个出兵按钮,出兵位置为SoldierPosition*/
+	void initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type,Layer* layer);
 	CREATE_FUNC(SoldierMenu);
 
 	void update(float dt);
 
 	Point soldier_Position;
-	sol_type soldier_Type;
+	sol_type this_type;
 	void create_Soldier();
 
 	EventListenerTouchOneByOne* listener;
-	bool onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, Point SoldierPosition, sol_type soldier_type);
+	bool onTouchBegan(CCTouch* pTouch, CCEvent* pEvent,  sol_type soldier_type);
 
 	Sprite* soldier_menu;
 
+	Layer* _layer;
 
 	int cost;
 	int cd_time;
@@ -64,15 +74,20 @@ public:
 class ConstructionMenu : public cocos2d::Layer
 {
 public:
-	static  ConstructionMenu* createConstructionMenu(Point position, cons_type construct_type);/*在position（point型参数）处创建一个建筑按钮,方式为拖动*/
-	void initConstructionMenu(Point position, cons_type construct_type);
+	static  ConstructionMenu* createConstructionMenu(Point position, cons_type construct_type,Layer* layer);/*在position（point型参数）处创建一个建筑按钮,方式为拖动*/
+	void initConstructionMenu(Point position, cons_type construct_type,Layer* layer);
 	void update(float dt);
 
 	Sprite* construction_menu;
 	Sprite* construction;
+	cons_type this_type;
+
+	Layer* _layer;
+	std::list<Construction*>::iterator iter2;
 
 	int _power_cost;
 	int cd_time;
+	bool base_only;
 
 	bool create_begin;
 	CREATE_FUNC(ConstructionMenu);

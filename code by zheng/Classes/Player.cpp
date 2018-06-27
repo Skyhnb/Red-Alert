@@ -6,6 +6,12 @@ std::list<Construction*> Player::playerConstruction= std::list<Construction*>();
 int Player::power_max=0;
 int Player::power_cost = 0;
 int Player::money = 0;
+bool Player::construction_commit=false;
+bool Player::tank_commit = false;
+bool Player::soldier_commit = false;
+Point Player::soldier_create_position = Point(1,1);
+Point Player::tank_create_position = Point(1, 1);
+Point Player::gather_position= Point(1, 1);
 Player* Player::createPlayer()
 {
 	Player* player = Player::create();
@@ -19,6 +25,10 @@ Player* Player::createPlayer()
 }
 void Player::initPlayer()
 {
+	construction_commit = false;
+	soldier_commit=false;
+	tank_commit = false;
+
 	listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(Player::onTouchBegan, this);
 	listener->setSwallowTouches(true);
@@ -62,9 +72,23 @@ void Player::update(float dt)
 	}
 	for (iter2 = playerConstruction.begin(); iter2 != playerConstruction.end(); iter2++)
 	{
+		if ((*iter2)->this_type == armycamp)
+		{
+			soldier_commit = true;
+			soldier_create_position = Point(((*iter2)->character->getPositionX() + (*iter2)->character->getContentSize().width/2+3), ((*iter2)->character->getPositionY()));
+		}
+		if ((*iter2)->this_type == tankfac)
+		{
+			tank_commit = true;
+			tank_create_position = Point(((*iter2)->character->getPositionX() + (*iter2)->character->getContentSize().width/2+3), ((*iter2)->character->getPositionY()));
+		}
+		if ((*iter2)->this_type == base)
+		{
+			gather_position = Point(((*iter2)->character->getPositionX() + (*iter2)->character->getContentSize().width / 2), ((*iter2)->character->getPositionY()));
+		}
 		temp_power+=(*iter2)->produce_power;
 		temp_power_cost+=(*iter2)->cost_power;
-		if ((*iter2)->hp== 500 && (*iter2)->cost_power == 50)
+		if ((*iter2)->this_type == miner)
 		{
 			money += 2;
 		}
@@ -113,20 +137,21 @@ Construction* Player::getSelectedConstruction()
 	}
 }
 
-SoldierMenu* SoldierMenu::createSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type)
+SoldierMenu* SoldierMenu::createSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type,Layer* layer)
 {
 	SoldierMenu* menu = SoldierMenu::create();
 	if (menu)
 	{
-		menu->initSoldierMenu(position, SoldierPosition,soldier_type);
+		menu->initSoldierMenu(position, SoldierPosition,soldier_type,layer);
 		return menu;
 	}
 	CC_SAFE_DELETE(menu);
 	return NULL;
 }
-void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type)
+void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_type soldier_type,Layer* layer)
 {
-	switch (soldier_type)
+	this_type = soldier_type;
+	switch (this_type)
 	{
 	case(american):
 	{
@@ -138,26 +163,41 @@ void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_typ
 		soldier_menu = Sprite::create("dogmenu.png");
 		cost = 10;
 	}break;
+	case(tank):
+	{
+		soldier_menu = Sprite::create("tankmenu.png");
+		cost = 100;
+	}break;
 	}
 	
 	cd_time = 300;
 	waiting_soldier = 0;
+	_layer = layer;
+	soldier_Position = SoldierPosition;
 
 	soldier_menu->setScale(1.0);
 	soldier_menu->setPosition(position);
 	this->addChild(soldier_menu);
 
 	listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(SoldierMenu::onTouchBegan, this, SoldierPosition,soldier_type);
+	listener->onTouchBegan = CC_CALLBACK_2(SoldierMenu::onTouchBegan, this, soldier_type);
 	listener->setSwallowTouches(true);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 	this->scheduleUpdate();
 
 }
-bool SoldierMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, Point SoldierPosition ,sol_type soldier_type)
+bool SoldierMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, sol_type soldier_type)
 {
 	auto point = pTouch->getLocation();
 	auto position = this->soldier_menu->getPosition();
+	if (!Player::soldier_commit&&this_type!=tank)
+	{
+		return false;
+	}
+	if (this_type == tank && !Player::tank_commit)
+	{
+		return false;
+	}
 	if (
 		point.x > position.x - soldier_menu->getContentSize().width / 2 &&
 		point.x<position.x + soldier_menu->getContentSize().width / 2 &&
@@ -170,8 +210,7 @@ bool SoldierMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent, Point SoldierPo
 			return false;
 		}
 		waiting_soldier++;
-		soldier_Position=SoldierPosition;
-		soldier_Type=soldier_type;
+
 		Player::money -= cost;
 	}
 
@@ -190,28 +229,43 @@ void SoldierMenu::update(float dt)
 }
 void SoldierMenu::create_Soldier()
 {
-	Soldier* soldier = Soldier::createSoldier(soldier_Position, soldier_Type);
-	this->addChild(soldier);
+	Point create_position;
+	if (this_type == tank)
+	{
+		create_position=Player::tank_create_position;
+	}
+	else
+	{
+		create_position = Player::soldier_create_position;
+	}
+	Soldier* soldier = Soldier::createSoldier(create_position, this_type, _layer);
+	_layer->addChild(soldier,10);
 	Player::playerSoldier.push_back(soldier);
+	soldier->isStop = false;
+	MyMoveto* moveto = MyMoveto::create(20.0f, Player::gather_position, soldier->speed);
+	soldier->runAction(moveto);
 }
 
-ConstructionMenu* ConstructionMenu::createConstructionMenu(Point position, cons_type construct_type)
+ConstructionMenu* ConstructionMenu::createConstructionMenu(Point position, cons_type construct_type,Layer* layer)
 {
 	ConstructionMenu* menu = ConstructionMenu::create();
 	if (menu)
 	{
-		menu->initConstructionMenu(position,construct_type);
+		menu->initConstructionMenu(position,construct_type,layer);
 		return menu;
 	}
 	CC_SAFE_DELETE(menu);
 	return NULL;
 }
-void ConstructionMenu::initConstructionMenu(Point position, cons_type construct_type)
+void ConstructionMenu::initConstructionMenu(Point position, cons_type construct_type,Layer* layer)
 {
 	create_begin = false;
 	cd_time = 600;
+	_layer = layer;
+	this_type = construct_type;
+	base_only = true;
 
-	switch (construct_type)
+	switch (this_type)
 	{
 	case(power):
 	  {
@@ -272,6 +326,14 @@ bool ConstructionMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent,cons_type c
 {
 	auto point = pTouch->getLocation();
 	auto position = this->construction_menu->getPosition();
+	if (!(this_type == base || Player::construction_commit))
+	{
+		return false;
+	}
+	if (!base_only)
+	{
+		return false;
+	}
 	if (
 		point.x > position.x - construction_menu->getContentSize().width / 2 &&
 		point.x<position.x + construction_menu->getContentSize().width / 2 &&
@@ -284,7 +346,7 @@ bool ConstructionMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent,cons_type c
 			return false;
 		}
 		construction->setPosition(point);
-		construction->setOpacity(255);
+		construction->setOpacity(128);
 		create_begin = true;
 	}
 
@@ -305,10 +367,36 @@ void ConstructionMenu::onTouchEnded(CCTouch* pTouch, CCEvent* pEvent, cons_type 
 	if (create_begin)
 	{
 		auto point = pTouch->getLocation();
+		auto _point = _layer->convertToNodeSpace(pTouch->getLocation());
+		auto _point_menu= _layer->convertToNodeSpace(construction_menu->getPosition());
 		construction->setOpacity(0);
-		Construction* construction = Construction::createConstruction(point,construct_type);
-		this->addChild(construction);
-		Player::playerConstruction.push_back(construction);
+		for (iter2 = Player::playerConstruction.begin(); iter2 != Player::playerConstruction.end(); iter2++)
+		{
+			if (
+				(((_point.x - (*iter2)->character->getPositionX()) < ((*iter2)->character->getContentSize().width / 2 + construction->getContentSize().width / 2))
+				&& ((_point.x - (*iter2)->character->getPositionX()) > (-(*iter2)->character->getContentSize().width / 2 - construction->getContentSize().width / 2))
+				&& ((_point.y - (*iter2)->character->getPositionY()) < ((*iter2)->character->getContentSize().height / 2 + construction->getContentSize().height / 2))
+				&& ((_point.y - (*iter2)->character->getPositionY()) > (-(*iter2)->character->getContentSize().height / 2 - construction->getContentSize().height / 2)))
+				||
+				((_point.x<_point_menu.x+ construction_menu->getContentSize().width / 2)
+				&& (_point.x>_point_menu.x - construction_menu->getContentSize().width / 2)
+				&& (_point.y<_point_menu.y + construction_menu->getContentSize().height / 2)
+				&&(_point.y>_point_menu.y - construction_menu->getContentSize().height / 2))
+				)
+			{
+				create_begin = false;
+				return;
+			}
+		}
+		if (this_type == base)
+		{
+			base_only = false;
+			Player::construction_commit = true;
+		}
+		Construction* _construction = Construction::createConstruction(point,construct_type,_layer);
+		_layer->addChild(_construction,10);//建筑，小兵的优先值相等
+		_construction->character->setPosition(_point);
+		Player::playerConstruction.push_back(_construction);
 		create_begin = false;
 		cd_time = 0;
 	}

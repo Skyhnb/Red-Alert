@@ -10,9 +10,11 @@ USING_NS_CC;
 class Manager :public  cocos2d::Node
 {
 public:
-	static Manager* createManager();
-	void initManager();//初始化
+	static Manager* createManager(Layer*_map,Layer* _sprite);
+	void initManager(Layer*_map, Layer* _sprite);//初始化
 
+	Layer* _mapLayer = Layer::create();
+	Layer* _spriteLayer = Layer::create();
 
 	std::vector<class Player*> players;
 	std::vector<class Player*>::iterator player;
