@@ -1,18 +1,18 @@
 #include "Construction.h"
 
 
-Construction* Construction::createConstruction(Point position, cons_type construction_type)
+Construction* Construction::createConstruction(Point position, cons_type construction_type, Layer* layer)
 {
 	Construction* construction = Construction::create();
 	if (construction)
 	{
-		construction->initConstruction(position,construction_type);
+		construction->initConstruction(position,construction_type,layer);
 		return construction;
 	}
 	CC_SAFE_DELETE(construction);
 	return NULL;
 }
-void Construction::initConstruction(Point position, cons_type construction_type)
+void Construction::initConstruction(Point position, cons_type construction_type, Layer* layer)
 {
 
 	switch (construction_type)
@@ -55,9 +55,10 @@ void Construction::initConstruction(Point position, cons_type construction_type)
 	}
 
 	attackers = std::list<Soldier*>();
+	_layer = layer;
+	this_type = construction_type;
 
-
-	character->setScale(0.5);
+	character->setScale(1);
 	character->setPosition(position);
 	this->addChild(character);//非选中状态图
 
@@ -75,15 +76,16 @@ void Construction::update(float dt)
 	std::list<Soldier*>::iterator tem_attacker;
 	for (attacker = attackers.begin(); attacker != attackers.end();)
 	{
-		 if ((*attacker) == nullptr)
-			{
-				tem_attacker = attacker;
-				attacker++;
-				attackers.erase(tem_attacker);
-			}
-		else if (((*attacker)->character->getPositionX())*((*attacker)->character->getPositionX()) +
-			((*attacker)->character->getPositionY())*((*attacker)->character->getPositionY())>
-			((*attacker)->range)*((*attacker)->range))
+		auto target_point = _layer->convertToNodeSpace(character->getPosition());
+		auto attacker_point = _layer->convertToNodeSpace((*attacker)->character->getPosition());
+		if (((*attacker)->speed != 3 && (*attacker)->speed != 5 && (*attacker)->speed != 8) || ((*attacker)->hp>200 || (*attacker)->hp<-200))
+		{
+			tem_attacker = attacker;
+			attacker++;
+			attackers.erase(tem_attacker);
+		}
+		else if (((attacker_point.x - target_point.x)*(attacker_point.x - target_point.x) + (attacker_point.y - target_point.y)*(attacker_point.y - target_point.y))
+		>((*attacker)->range)*((*attacker)->range))
 		{
 			tem_attacker = attacker;
 			attacker++;
@@ -122,13 +124,13 @@ void Construction::updateattack(float dt)
 
 bool Construction::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent)
 {
-	auto point = pTouch->getLocation();
+	auto _point = _layer->convertToNodeSpace(pTouch->getLocation());
 	auto position = this->character->getPosition();
 	this->isSelected = (
-		point.x > position.x - character->getContentSize().width / 4 &&
-		point.x<position.x + character->getContentSize().width / 4 &&
-		point.y>position.y - character->getContentSize().height / 4 &&
-		point.y < position.y + character->getContentSize().height / 4
+		_point.x > position.x - character->getContentSize().width / 2 &&
+		_point.x<position.x + character->getContentSize().width / 2 &&
+		_point.y>position.y - character->getContentSize().height / 2 &&
+		_point.y < position.y + character->getContentSize().height / 2
 		);      //改变活动状态，传递鼠标选中指针
 	return false;
 

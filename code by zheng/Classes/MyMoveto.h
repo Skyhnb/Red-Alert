@@ -10,6 +10,7 @@
 #include"2d\CCActionInterval.h"
 #include"Player.h"
 #include"SoldierSprite.h"
+#include"Construction.h"
 
 NS_CC_BEGIN
 
@@ -20,6 +21,7 @@ public:
 	static MyMoveto* create(float duration, const Vec2& endPosition,int speed);
 	virtual void startWithTarget(Node *target) override;
 	virtual void update(float time) override;
+	virtual bool isDone(void) const override;
 
 CC_CONSTRUCTOR_ACCESS:
 	MyMoveto() {};
@@ -27,9 +29,11 @@ CC_CONSTRUCTOR_ACCESS:
 
 	bool initWithDuration(float duration, const Vec2& deltaPosition,float speed);
 	bool covered;
+	bool _isDone;
 
 protected:
 	Vec2 _positionDelta;
+	Vec2 _target_position;
 	Vec2 _endPosition;
 
 	float _speed;

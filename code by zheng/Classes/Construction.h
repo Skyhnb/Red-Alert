@@ -11,8 +11,8 @@ enum cons_type
 class Construction :public cocos2d::Sprite
 {
 public:
-	static Construction* createConstruction(Point position, cons_type construction_type);/*在position（point型参数）处创建一个小兵*/
-	void initConstruction(Point position, cons_type construction_type);
+	static Construction* createConstruction(Point position, cons_type construction_type, Layer* layer);/*在position（point型参数）处创建一个小兵*/
+	void initConstruction(Point position, cons_type construction_type, Layer* layer);
 	CREATE_FUNC(Construction);
 
 	void update(float dt);
@@ -22,6 +22,8 @@ public:
 	void push_back_attacker(Soldier*);
 
 	Sprite* character;
+	Layer* _layer;
+	cons_type this_type;
 
 	EventListenerTouchOneByOne* listener;
 	bool onTouchBegan(CCTouch* pTouch, CCEvent* pEvent);
