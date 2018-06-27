@@ -3,16 +3,17 @@
 #include"FindScene.h"
 #include"OrderCode.h"
 #include"cocos2d.h"
-#include "createroom.h"
+
+#include "RoomScene.h"
 
 
 USING_NS_CC;
 using namespace ui;
 
-int timeloop; //¼ÆÊ±Æ÷£¬Ã¿100f·¢ËÍÒ»´Î²éÑ¯·¿¼äĞÅÏ¢
-static Client*  client = nullptr;  //Ö¸Ïòclient£¬´«ÊäÊı¾İ
-static std::string  _static_player_name; //Íæ¼ÒÃû×Ö
-std::vector<std::string> room_owner; //·¿Ö÷Ãû³Æ
+int timeloop; //è®¡æ—¶å™¨ï¼Œæ¯100få‘é€ä¸€æ¬¡æŸ¥è¯¢æˆ¿é—´ä¿¡æ¯
+static Client*  client = nullptr;  //æŒ‡å‘clientï¼Œä¼ è¾“æ•°æ®
+static std::string  _static_player_name; //ç©å®¶åå­—
+std::vector<std::string> room_owner; //æˆ¿ä¸»åç§°
 
 Scene* FindScene::createScene(Client* cl, std::string name)
 {
@@ -57,6 +58,7 @@ bool FindScene::init()
 
 }
 
+
 void FindScene::update(float delta)
 {
 	if (client->_is_searched)
@@ -90,8 +92,8 @@ void FindScene::update(float delta)
 				{
 					room_owner.push_back(owner_name);
 
-					auto space = Button::create("PlayerBar.png", "PlayerBar.png");
-					auto enter_in = Button::create("RoomList_connect.png");
+					auto space = Button::create("NAMEButtonNormal.png", "NAMEButtonNormal.png");
+					auto enter_in = Button::create("enterroomselected.png");
 					space->addChild(enter_in);
 
 					enter_in->setPosition(Vec2(space->getContentSize().width / 6 * 5, space->getContentSize().height / 2));
@@ -106,7 +108,7 @@ void FindScene::update(float delta)
 							client->_filter_mode = true;
 							client->order_type = button_owner_name;
 
-							auto transition= TransitionSlideInL::create(1.0f,  CreateRoom::createScene(client, 1, _player_name));
+							auto transition= TransitionSlideInL::create(1.0f,  RoomScene::createScene(client, 1, _player_name));
 							Director::getInstance()->pushScene(transition);
 						}
 					});
