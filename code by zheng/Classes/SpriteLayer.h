@@ -31,7 +31,7 @@ public:
 	void menuPauseCallback(cocos2d::Ref* pSender);
 	void initSpritebg();
 	void updateMoney(float dt);
-	void updatePower();
+	void updatePower(float dt);
 	void updateTime(float dt);
 	void mousemove(Event* event);
 

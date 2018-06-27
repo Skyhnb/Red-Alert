@@ -84,7 +84,7 @@ void Player::update(float dt)
 		}
 		if ((*iter2)->this_type == base)
 		{
-			gather_position = Point(((*iter2)->character->getPositionX() + (*iter2)->character->getContentSize().width / 2), ((*iter2)->character->getPositionY()));
+			gather_position = Point(((*iter2)->character->getPositionX() + (*iter2)->character->getContentSize().width / 2+10), ((*iter2)->character->getPositionY()));
 		}
 		temp_power+=(*iter2)->produce_power;
 		temp_power_cost+=(*iter2)->cost_power;
@@ -156,17 +156,17 @@ void SoldierMenu::initSoldierMenu(Point position, Point SoldierPosition, sol_typ
 	case(american):
 	{
 		soldier_menu = Sprite::create("soldiermenu.png");
-		cost = 20;
+		cost = 500;
 	}break;
 	case(dog):
 	{
 		soldier_menu = Sprite::create("dogmenu.png");
-		cost = 10;
+		cost = 300;
 	}break;
 	case(tank):
 	{
 		soldier_menu = Sprite::create("tankmenu.png");
-		cost = 100;
+		cost = 2000;
 	}break;
 	}
 	
@@ -321,6 +321,22 @@ void ConstructionMenu::initConstructionMenu(Point position, cons_type construct_
 void ConstructionMenu::update(float dt)
 {
 	cd_time++;
+	if (this_type != base && !Player::construction_commit)
+	{
+		construction_menu->setOpacity(100);
+	}
+	else if (Player::power_cost + _power_cost > Player::power_max || cd_time<600)
+	{
+		construction_menu->setOpacity(100);
+	}
+	else
+	{
+		construction_menu->setOpacity(255);
+	}
+	if (this_type == base && !base_only)
+	{
+		construction_menu->setOpacity(100);
+	}
 }
 bool ConstructionMenu::onTouchBegan(CCTouch* pTouch, CCEvent* pEvent,cons_type construct_type)
 {

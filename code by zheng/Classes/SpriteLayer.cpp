@@ -1,5 +1,6 @@
 #include "SpriteLayer.h"
 #include "PauseLayer.h"
+#include"Player.h"
 
 USING_NS_CC;
 
@@ -12,7 +13,7 @@ bool MySprite::init()
 
 	this->schedule(schedule_selector(MySprite::updateTime),1.0f, kRepeatForever,0);
 	this->schedule(schedule_selector(MySprite::updateMoney), 1.0f, kRepeatForever, 0);
-	updatePower();
+	this->schedule(schedule_selector(MySprite::updatePower), 1.0f, kRepeatForever, 0);
 	
 	//暂停按钮
 	auto pauseItem = MenuItemImage::create(
@@ -141,7 +142,7 @@ void MySprite::initSpritebg()
 void MySprite::updateMoney(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	money += 15;
+	money=Player::money;
 	Node *n = this->getChildByTag(GameMoney);
 	if (n)
 	{
@@ -155,7 +156,7 @@ void MySprite::updateMoney(float dt)
 }
 
 //更新电力
-void MySprite::updatePower()
+void MySprite::updatePower(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Node *n = this->getChildByTag(GamePower);
@@ -163,6 +164,8 @@ void MySprite::updatePower()
 	{
 		this->removeChildByTag(GamePower);
 	}
+	usedpower = Player::power_cost;
+	power1 = Player::power_max;
 	__String *power1 = __String::createWithFormat("%d / %d", this->usedpower, this->power1);
 	auto powerlable = Label::createWithTTF(power1->getCString(),
 		"fonts/Marker Felt.ttf", 18);
